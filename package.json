@@ -1,0 +1,27 @@
+{
+  "name": "devbyshima",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.18.2",
+  "scripts": {
+    "start": "wrangler dev",
+    "preview": "tsm scripts/preview.ts",
+    "deploy": "pnpm stats && wrangler deploy",
+    "format": "prettier --write ./{src,scripts}/*",
+    "stats": "tsm scripts/stats.ts",
+    "lint": "prettier --check ./{src,scripts}/*",
+    "types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240620.0",
+    "@types/node": "^20.14.9",
+    "prettier": "^3.3.2",
+    "tsm": "^2.3.0",
+    "typescript": "^5.5.3",
+    "wrangler": "^3.63.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild", "workerd", "sharp"]
+  }
+}
