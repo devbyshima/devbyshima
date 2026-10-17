@@ -10,4 +10,4 @@ compatibility_date = "2024-09-23"
 # subdomain, e.g. https://devbyshima.<your-account>.workers.dev
 #
 # To use a custom domain later, add (and make sure the zone is on Cloudflare):
-# routes = [{ pattern = "readme.byshima.dev", custom_domain = true }]
+# routes = [{ pattern = "readme.shima.sh", custom_domain = true }]
