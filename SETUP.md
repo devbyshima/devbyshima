@@ -2,9 +2,10 @@
 
 A website inside an SVG, inside an image, inside markdown, inside a GitHub `README.md`.
 
-The profile `README.md` embeds animated SVGs served by a Cloudflare Worker. A
-GitHub Action refetches your contribution graph and redeploys the Worker twice a
-day, so the readme stays current on its own.
+The profile `README.md` embeds animated SVGs served by a Cloudflare Worker on
+the **devbyshima** Cloudflare account. The Worker reads your public contribution
+graph from GitHub itself and caches it for an hour, so the readme stays current
+with no scheduled job, redeploy or token.
 
 > [!WARNING]
 > This is experimental. GitHub renders the `<foreignObject>` SVGs in
@@ -20,9 +21,9 @@ Credit: architecture adapted from [terkelg/terkelg](https://github.com/terkelg/t
 | `README.md`                  | The profile itself — just `<img>`s pointing at the Worker.    |
 | `src/worker.ts`              | Cloudflare Worker; routes `?section=…&theme=…` to a renderer. |
 | `src/render.ts`              | All the SVG + CSS. Edit your bio, colors, animations here.    |
-| `scripts/stats.ts`           | Fetches your GitHub contribution calendar → `src/stats.json`. |
+| `src/stats.ts`               | Fetches and caches your public contribution calendar.         |
 | `scripts/preview.ts`         | Renders every section to `dist/*.svg` with mock data.         |
-| `.github/workflows/`         | `ci` (typecheck + lint) and `deploy` (stats + redeploy).      |
+| `.github/workflows/ci.yml`   | Typecheck + lint on every push.                               |
 
 ## First-time setup
 
@@ -32,7 +33,7 @@ The repo **must** be named exactly `devbyshima` (same as your username) for
 GitHub to treat its README as your profile.
 
 ```bash
-cd ~/Dev/devbyshima
+cd ~/Dev/shima/sites/devbyshima
 git init -b main
 git add .
 git commit -m "Animated profile readme"
@@ -46,24 +47,17 @@ pnpm install
 pnpm types      # typecheck
 pnpm lint       # prettier check
 pnpm preview    # writes dist/*.svg you can open in a browser
-pnpm start      # wrangler dev — open the printed localhost URL with ?section=main&theme=dark
+pnpm start      # wrangler dev; open the printed localhost URL with ?section=main&theme=dark
 ```
 
-`pnpm start` runs the Worker locally but needs `src/stats.json`. Generate it
-first with a token (next step) or just use `pnpm preview` for mock data.
+`pnpm start` runs the Worker locally with live data from GitHub, same as
+production. `pnpm preview` uses mock data and needs no network.
 
-### 3. Fetch your real stats (optional, for local dev)
-
-```bash
-echo 'API_TOKEN_GITHUB=ghp_yourPersonalAccessToken' > .env   # classic PAT, no scopes needed for public data
-pnpm stats                                                   # writes src/stats.json
-```
-
-### 4. Deploy the Worker
+### 3. Deploy the Worker
 
 ```bash
-pnpm dlx wrangler login   # authorize wrangler with your Cloudflare account
-pnpm deploy               # fetches stats, then deploys
+pnpm dlx wrangler login   # pick the devbyshima Cloudflare account
+pnpm run deploy           # `pnpm deploy` is a different, built-in pnpm command
 ```
 
 Wrangler prints your live URL, e.g.:
@@ -72,7 +66,7 @@ Wrangler prints your live URL, e.g.:
 https://devbyshima.<your-account-subdomain>.workers.dev
 ```
 
-### 5. Point the README at your real URL
+### 4. Point the README at your real URL
 
 In `README.md`, replace every `https://devbyshima.workers.dev` with the exact
 URL wrangler printed, then commit & push:
@@ -84,16 +78,11 @@ git push
 
 Open https://github.com/devbyshima — it should render. 🎉
 
-### 6. Wire up the auto-redeploy Action
+### Deploying changes
 
-The `deploy` workflow refreshes your graph at 00:00 and 12:00 UTC. Add two
-repo secrets (Settings → Secrets and variables → Actions):
-
-- `CLOUDFLARE_API_TOKEN` — Cloudflare → My Profile → API Tokens → **Edit
-  Cloudflare Workers** template.
-- `CLOUDFLARE_ACCOUNT_ID` — Cloudflare dashboard → Workers & Pages (right sidebar).
-
-`API_TOKEN_GITHUB` is handled automatically by the built-in `GITHUB_TOKEN`.
+Nothing deploys automatically. After changing `src/`, run `pnpm run deploy`
+(logged in to the devbyshima account). The contribution graph needs no deploy:
+it refreshes on its own within an hour.
 
 ## Customizing
 
