@@ -1,5 +1,5 @@
 import { fallback, link, main, top } from './render.js';
-import data from './stats.json';
+import { getStats } from './stats.js';
 
 export type Year = {
   from: string;
@@ -10,14 +10,14 @@ export type Year = {
 const MAX_YEARS = 3;
 
 const worker: ExportedHandler = {
-  async fetch(request) {
+  async fetch(request, _env, ctx) {
     const { searchParams } = new URL(request.url);
     const theme = (searchParams.get('theme') ?? 'light') as 'light' | 'dark';
     const section = searchParams.get('section') ?? '';
     let content = ':-)';
 
     if (section === 'top') {
-      const { contributions } = data;
+      const { contributions } = await getStats(request, ctx);
       content = top({ height: 20, contributions, theme });
     } else if (section === 'link-website') {
       const index = Number(searchParams.get('i')) || 0;
@@ -31,6 +31,7 @@ const worker: ExportedHandler = {
     } else if (section === 'fallback') {
       content = fallback({ height: 180, width: 420, theme });
     } else {
+      const data = await getStats(request, ctx);
       const years = data.years.slice(0, MAX_YEARS);
       const options = {
         dots: {

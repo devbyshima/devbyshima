@@ -7,9 +7,8 @@
   "scripts": {
     "start": "wrangler dev",
     "preview": "tsm scripts/preview.ts",
-    "deploy": "pnpm stats && wrangler deploy",
+    "deploy": "wrangler deploy",
     "format": "prettier --write ./{src,scripts}/*",
-    "stats": "tsm scripts/stats.ts",
     "lint": "prettier --check ./{src,scripts}/*",
     "types": "tsc --noEmit"
   },

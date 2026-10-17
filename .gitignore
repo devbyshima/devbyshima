@@ -1,5 +1,4 @@
 dist
-src/stats.json
 .dev.vars
 .wrangler/
 .DS_Store
