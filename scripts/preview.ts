@@ -1,5 +1,5 @@
 import { mkdir, writeFile } from 'node:fs/promises';
-import { fallback, link, main, top } from '../src/render';
+import { fallback, link, main, tag, top } from '../src/render';
 import type { Year } from '../src/worker';
 
 /**
@@ -34,6 +34,18 @@ for (const theme of themes) {
     [`link-website-${theme}`]: link({ height: 18, width: 100, index: 0, theme })('Website'),
     [`link-x-${theme}`]: link({ height: 18, width: 100, index: 1, theme })('X'),
     [`link-linkedin-${theme}`]: link({ height: 18, width: 100, index: 2, theme })('LinkedIn'),
+    [`rank-${theme}`]: tag({
+      height: 36,
+      width: 240,
+      rank: { country: 'Rwanda', position: 55 },
+      theme
+    }),
+    [`rank-unranked-${theme}`]: tag({
+      height: 36,
+      width: 240,
+      rank: { country: 'Rwanda', position: 0 },
+      theme
+    }),
     [`fallback-${theme}`]: fallback({ height: 180, width: 420, theme }),
     [`main-${theme}`]: main({ height: 290, years, sizes, length, theme, ...options })
   };

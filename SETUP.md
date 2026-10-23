@@ -22,6 +22,7 @@ Credit: architecture adapted from [terkelg/terkelg](https://github.com/terkelg/t
 | `src/worker.ts`              | Cloudflare Worker; routes `?section=…&theme=…` to a renderer. |
 | `src/render.ts`              | All the SVG + CSS. Edit your bio, colors, animations here.    |
 | `src/stats.ts`               | Fetches and caches your public contribution calendar.         |
+| `src/rank.ts`                | Fetches and caches your committers.top rank in Rwanda.        |
 | `scripts/preview.ts`         | Renders every section to `dist/*.svg` with mock data.         |
 | `.github/workflows/ci.yml`   | Typecheck + lint on every push.                               |
 

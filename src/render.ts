@@ -1,3 +1,4 @@
+import type { Rank } from './rank';
 import type { Year } from './worker';
 
 const BP_MEDIUM = 550;
@@ -494,6 +495,84 @@ export const link = (props: Props & { index: number }) => (label: string) => {
 				<div class="link__label shine">${label}</div>
 				<div class="link__arrow">↗</div>
 			</a>
+		</main>
+	`;
+
+  return svg(styles, html, {
+    width: `${props.width}`,
+    height: `${props.height}`,
+    'data-theme': `${props.theme}`
+  });
+};
+
+export const tag = (props: Props & { rank: Rank }) => {
+  const styles = /*css*/ `
+		${shared}
+
+		:root {
+			--size-height: ${props.height};
+			--size-width: ${props.width};
+
+			/* GitHub's page background, for text set on a filled tag */
+			--color-bg-light: #FFFFFF;
+			--color-bg-dark: #0D1117;
+		}
+
+		[data-theme="dark"] {
+			--color-bg: var(--color-bg-dark);
+		}
+
+		[data-theme="light"] {
+			--color-bg: var(--color-bg-light);
+		}
+
+		.wrapper {
+			--delay: calc(var(--animate-in-graph-delay) + 1s);
+			display: flex;
+			align-items: end;
+		}
+		@-moz-document url-prefix() {
+			/* Overwrite default, allow this to show in FF */
+			.wrapper {
+				display: flex;
+			}
+		}
+
+		.tag {
+			display: inline-flex;
+			block-size: 20px;
+			border: 1px solid var(--color-text);
+			border-radius: 4px;
+			overflow: hidden;
+			font-size: 12px;
+			line-height: 18px;
+			white-space: nowrap;
+		}
+		.tag__label,
+		.tag__value {
+			padding-inline: 7px;
+		}
+		.tag__value {
+			background-color: var(--color-text);
+			color: var(--color-bg);
+			font-weight: 600;
+		}
+	`;
+
+  const { country, position } = props.rank;
+  const value =
+    position === undefined
+      ? country
+      : position === 0
+        ? `${country} unranked`
+        : `${country} #${position}`;
+
+  const html = /*html*/ `
+		<main class="wrapper">
+			<div class="tag fade-in">
+				<span class="tag__label">committers.top</span>
+				<span class="tag__value">${value}</span>
+			</div>
 		</main>
 	`;
 

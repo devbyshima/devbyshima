@@ -38,3 +38,9 @@
   <source media="(prefers-color-scheme: dark)" srcset="https://devbyshima.devbyshima.workers.dev?section=main&theme=dark">
   <img src="https://devbyshima.devbyshima.workers.dev?section=main&theme=light" alt="I'm Shima. An indie developer and maker, building apps, tools, and small corners of the internet." width="100%" height="290" align="left">
 </picture>
+<a href="https://committers.top/rwanda">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://devbyshima.devbyshima.workers.dev?section=rank&theme=dark">
+    <img src="https://devbyshima.devbyshima.workers.dev?section=rank&theme=light" alt="committers.top rank in Rwanda" width="240" height="36" align="left">
+  </picture>
+</a>
