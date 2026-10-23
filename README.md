@@ -38,3 +38,7 @@
   <source media="(prefers-color-scheme: dark)" srcset="https://devbyshima.devbyshima.workers.dev?section=main&theme=dark">
   <img src="https://devbyshima.devbyshima.workers.dev?section=main&theme=light" alt="I'm Shima. An indie developer and maker, building apps, tools, and small corners of the internet." width="100%" height="290" align="left">
 </picture>
+<img src="data:null;," width="100%" height="0" align="left" alt="">
+<a href="https://user-badge.committers.top/rwanda/devbyshima">
+  <img src="https://user-badge.committers.top/rwanda/devbyshima.svg" alt="committers.top badge" height="20" align="left">
+</a>
