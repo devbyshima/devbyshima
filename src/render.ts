@@ -35,22 +35,23 @@ const svg = (styles: string, html: string, attributes: Attributes) => {
 
 export const shared = /* css */ `
 	:root {
-		/* Monochrome graphite — light */
+		/* #E09D56, in the same five steps the graph used to climb through white */
+		--color-accent: #E09D56;
+		--color-accent-ink: #24292F;
 		--color-text-light: #24292F;
-		--color-dot-bg-0-light: #EBEDF0;
-		--color-dot-bg-1-light: #C6CBD1;
-		--color-dot-bg-2-light: #959DA5;
-		--color-dot-bg-3-light: #4D5358;
-		--color-dot-bg-4-light: #24292F;
+		--color-dot-bg-0-light: #F7F0E8;
+		--color-dot-bg-1-light: #EED3B5;
+		--color-dot-bg-2-light: #E6B784;
+		--color-dot-bg-3-light: #E09D56;
+		--color-dot-bg-4-light: #AB6226;
 		--color-dot-border-light: rgb(0 0 0 / 0.06);
 
-		/* Monochrome graphite — dark */
 		--color-text-dark: #C9D1D9;
-		--color-dot-bg-0-dark: #161B22;
-		--color-dot-bg-1-dark: #30363D;
-		--color-dot-bg-2-dark: #57606A;
-		--color-dot-bg-3-dark: #8B949E;
-		--color-dot-bg-4-dark: #C9D1D9;
+		--color-dot-bg-0-dark: #281D15;
+		--color-dot-bg-1-dark: #52361E;
+		--color-dot-bg-2-dark: #865428;
+		--color-dot-bg-3-dark: #C2782E;
+		--color-dot-bg-4-dark: #E09D56;
 		--color-dot-border-dark: rgb(255 255 255 / 0.05);
 
 		/* Initial animation offset... */
@@ -243,40 +244,56 @@ export const main = (props: Props & Main) => {
 		.graph {
 			--delay: var(--animate-in-graph-delay);
 			grid-area: 2 / 1 / span 1 / span 6;
+			overflow: clip;
+			min-inline-size: 0;
+
+			animation-name: fade-in;
+			animation-timing-function: ease-out;
+			animation-duration: 2.5s;
+			animation-fill-mode: both;
+			animation-delay: var(--animate-in-graph-delay);
 		}
 
 		.years {
-			--_w: var(--w);
+			--size-loop-gap: 120;
 			--_h: calc(var(--h) + var(--size-label-height));
 
 			display: flex;
-			gap: calc(var(--size-year-gap) * 1px);
-
-			contain: strict;
-			inline-size: calc(var(--_w) * 1px);
+			inline-size: max-content;
 			block-size: calc(var(--_h) * 1px);
 			will-change: transform;
 			backface-visibility: hidden;
-			transform: translateZ(0);
 
-			animation-name: scroll, fade-in;
-			animation-timing-function: linear, ease-out;
-			animation-duration: calc(30s + (var(--_w) * 0.06s)), 2.5s;
-			animation-fill-mode: both, both;
-			animation-delay: 2s, var(--animate-in-graph-delay);
+			/* --w is one year. The loop gap sits after it, so the repeat doesn't touch. */
+			animation-name: scroll;
+			animation-timing-function: linear;
+			animation-duration: calc((var(--w) + var(--size-loop-gap)) * 0.03s);
+			animation-iteration-count: infinite;
+			animation-delay: var(--animate-in-graph-delay);
+		}
+		@media (prefers-reduced-motion: reduce) {
+			.years {
+				animation: none;
+			}
 		}
 		@keyframes scroll {
-			0% {
-				transform: translateX(60px);
+			from {
+				transform: translateX(0);
 			}
-			100% {
-				transform: translateX(calc(-100% + 100cqw));
+			to {
+				transform: translateX(-50%);
 			}
+		}
+
+		.years__set {
+			display: flex;
+			flex: none;
+			padding-inline-end: calc(var(--size-loop-gap) * 1px);
 		}
 
 		.year {
 			contain: strict;
-			content-visibility: auto;
+			flex: none;
 			inline-size: calc(var(--w) * 1px);
 			block-size: calc(var(--_h) * 1px);
 		}
@@ -284,12 +301,10 @@ export const main = (props: Props & Main) => {
 		.year__label {
 			contain: strict;
 			block-size: calc(var(--size-label-height) * 1px);
-			content-visibility: auto;
 			display: flex;
 			align-items: end;
 		}
 		.year__days {
-			contain: content;
 			display: grid;
 			grid-auto-flow: column;
 			grid-template-rows: repeat(var(--rows), calc(var(--size-dot) * 1px));
@@ -297,13 +312,11 @@ export const main = (props: Props & Main) => {
 			gap: calc(var(--size-dot-gap) * 1px);
 
 			contain: strict;
-			content-visibility: auto;
 			inline-size: calc(var(--w) * 1px);
 			block-size: calc(var(--h) * 1px);
 		}
 		.year__days .dot {
 			contain: strict;
-			content-visibility: auto;
 			aspect-ratio: 1;
 			inline-size: calc(var(--size-dot) * 1px);
 			block-size: calc(var(--size-dot) * 1px);
@@ -318,18 +331,35 @@ export const main = (props: Props & Main) => {
 		.dot--4 { background-color: var(--color-dot-bg-4); }
 	`;
 
-  const format = (date: Date) =>
-    date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
+  const days = (levels: Year['days']) =>
+    levels.map((level) => `<div class="dot dot--${level}"></div>`).join('');
 
-  const date = (i: number) =>
-    i == 0 ? format(new Date()) : new Date(props.years[i].from).getFullYear();
+  // Stored newest-first. The strip reads January at the left through December at the right.
+  const januaryToDecember = (year: Year) => {
+    const yearNum = new Date(year.from).getUTCFullYear();
+    const total =
+      Math.round((Date.UTC(yearNum, 11, 31) - Date.UTC(yearNum, 0, 1)) / 86_400_000) + 1;
+    const levels = [...year.days].reverse();
+    while (levels.length < total) levels.push(0);
+    return levels.slice(0, total);
+  };
 
-  const days = (days: Year['days']) =>
-    days.map((level) => `<div class="dot dot--${level}"></div>`).join('');
+  // The graph is one calendar year, looped. years[0] is the current year.
+  const year = props.years[0];
+  const levels = januaryToDecember(year);
+  const columns = Math.ceil(levels.length / props.dots.rows);
+  const width = columns * props.dots.size + Math.max(0, columns - 1) * props.dots.gap;
+  const height = props.dots.rows * props.dots.size + (props.dots.rows - 1) * props.dots.gap;
+  const label = new Date(year.from).getUTCFullYear();
+
+  const yearSet = (hidden = false) => /* html */ `
+		<div class="years__set"${hidden ? ' aria-hidden="true"' : ''}>
+			<div class="year" style="--w: ${width}; --h: ${height};">
+				<div class="year__days">${days(levels)}</div>
+				<div class="year__label label"><span>${label}</span></div>
+			</div>
+		</div>
+	`;
 
   const html = /* html */ `
 		<main class="wrapper grid">
@@ -339,17 +369,9 @@ export const main = (props: Props & Main) => {
           .join('')}</p>
 			</article>
 			<article class="graph">
-				<div class="years" style="--w: ${props.length}; --h: ${props.sizes[0][1]};">
-					${props.years
-            .map(
-              (year, i) => /* html */ `
-						<div class="year year--${i}" style="--w: ${props.sizes[i][0]}; --h: ${props.sizes[i][1]};">
-							<div class="year__days">${days(year.days)}</div>
-							<div class="year__label label"><span>${date(i)}</span></div>
-						</div>
-					`
-            )
-            .join('')}
+				<div class="years" style="--w: ${width}; --h: ${height};">
+					${yearSet()}
+					${yearSet(true)}
 				</div>
 			</article>
 		</main>
@@ -468,6 +490,7 @@ export const link = (props: Props & { index: number }) => (label: string) => {
 			animation-delay: ${Math.random() * 10}s;
 		}
 		.link__arrow {
+			color: var(--color-accent);
 			font-size: 0.75em;
 			position: relative;
 			inset-block-start: 0.1em;
@@ -553,8 +576,8 @@ export const tag = (props: Props & { rank: Rank }) => {
 			padding-inline: 7px;
 		}
 		.tag__value {
-			background-color: var(--color-text);
-			color: var(--color-bg);
+			background-color: var(--color-accent);
+			color: var(--color-accent-ink);
 			font-weight: 600;
 		}
 	`;
