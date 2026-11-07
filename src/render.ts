@@ -35,23 +35,26 @@ const svg = (styles: string, html: string, attributes: Attributes) => {
 
 export const shared = /* css */ `
 	:root {
-		/* #E09D56, in the same five steps the graph used to climb through white */
+		/* Orange accent for the link arrows and rank value */
 		--color-accent: #E09D56;
 		--color-accent-ink: #24292F;
+
+		/* Monochrome graphite, light */
 		--color-text-light: #24292F;
-		--color-dot-bg-0-light: #F7F0E8;
-		--color-dot-bg-1-light: #EED3B5;
-		--color-dot-bg-2-light: #E6B784;
-		--color-dot-bg-3-light: #E09D56;
-		--color-dot-bg-4-light: #AB6226;
+		--color-dot-bg-0-light: #EBEDF0;
+		--color-dot-bg-1-light: #C6CBD1;
+		--color-dot-bg-2-light: #959DA5;
+		--color-dot-bg-3-light: #4D5358;
+		--color-dot-bg-4-light: #24292F;
 		--color-dot-border-light: rgb(0 0 0 / 0.06);
 
+		/* Monochrome graphite, dark */
 		--color-text-dark: #C9D1D9;
-		--color-dot-bg-0-dark: #281D15;
-		--color-dot-bg-1-dark: #52361E;
-		--color-dot-bg-2-dark: #865428;
-		--color-dot-bg-3-dark: #C2782E;
-		--color-dot-bg-4-dark: #E09D56;
+		--color-dot-bg-0-dark: #161B22;
+		--color-dot-bg-1-dark: #30363D;
+		--color-dot-bg-2-dark: #57606A;
+		--color-dot-bg-3-dark: #8B949E;
+		--color-dot-bg-4-dark: #C9D1D9;
 		--color-dot-border-dark: rgb(255 255 255 / 0.05);
 
 		/* Initial animation offset... */
@@ -213,7 +216,9 @@ export const main = (props: Props & Main) => {
 
 		.wrapper {
 			align-items: flex-end;
-			grid-template-rows: 1fr auto;
+			/* The intro row can't grow, so taller text (Segoe UI, OS text scaling,
+			   narrow columns) clips at the top instead of pushing the graph out. */
+			grid-template-rows: minmax(0, 1fr) auto;
 			row-gap: 20px;
 		}
 
