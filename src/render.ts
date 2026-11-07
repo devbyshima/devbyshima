@@ -35,22 +35,23 @@ const svg = (styles: string, html: string, attributes: Attributes) => {
 
 export const shared = /* css */ `
 	:root {
-		/* Monochrome graphite — light */
+		/* #E09D56, in the same five steps the graph used to climb through white */
+		--color-accent: #E09D56;
+		--color-accent-ink: #24292F;
 		--color-text-light: #24292F;
-		--color-dot-bg-0-light: #EBEDF0;
-		--color-dot-bg-1-light: #C6CBD1;
-		--color-dot-bg-2-light: #959DA5;
-		--color-dot-bg-3-light: #4D5358;
-		--color-dot-bg-4-light: #24292F;
+		--color-dot-bg-0-light: #F7F0E8;
+		--color-dot-bg-1-light: #EED3B5;
+		--color-dot-bg-2-light: #E6B784;
+		--color-dot-bg-3-light: #E09D56;
+		--color-dot-bg-4-light: #AB6226;
 		--color-dot-border-light: rgb(0 0 0 / 0.06);
 
-		/* Monochrome graphite — dark */
 		--color-text-dark: #C9D1D9;
-		--color-dot-bg-0-dark: #161B22;
-		--color-dot-bg-1-dark: #30363D;
-		--color-dot-bg-2-dark: #57606A;
-		--color-dot-bg-3-dark: #8B949E;
-		--color-dot-bg-4-dark: #C9D1D9;
+		--color-dot-bg-0-dark: #281D15;
+		--color-dot-bg-1-dark: #52361E;
+		--color-dot-bg-2-dark: #865428;
+		--color-dot-bg-3-dark: #C2782E;
+		--color-dot-bg-4-dark: #E09D56;
 		--color-dot-border-dark: rgb(255 255 255 / 0.05);
 
 		/* Initial animation offset... */
@@ -468,6 +469,7 @@ export const link = (props: Props & { index: number }) => (label: string) => {
 			animation-delay: ${Math.random() * 10}s;
 		}
 		.link__arrow {
+			color: var(--color-accent);
 			font-size: 0.75em;
 			position: relative;
 			inset-block-start: 0.1em;
@@ -553,8 +555,8 @@ export const tag = (props: Props & { rank: Rank }) => {
 			padding-inline: 7px;
 		}
 		.tag__value {
-			background-color: var(--color-text);
-			color: var(--color-bg);
+			background-color: var(--color-accent);
+			color: var(--color-accent-ink);
 			font-weight: 600;
 		}
 	`;
