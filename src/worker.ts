@@ -1,5 +1,4 @@
-import { getRank } from './rank.js';
-import { fallback, link, main, tag, top } from './render.js';
+import { fallback, link, main, top } from './render.js';
 import { getStats } from './stats.js';
 
 export type Year = {
@@ -29,8 +28,6 @@ const worker: ExportedHandler = {
     } else if (section === 'link-linkedin') {
       const index = Number(searchParams.get('i')) || 0;
       content = link({ height: 18, width: 100, index, theme })('LinkedIn');
-    } else if (section === 'rank') {
-      content = tag({ height: 36, width: 240, rank: await getRank(), theme });
     } else if (section === 'fallback') {
       content = fallback({ height: 180, width: 420, theme });
     } else {
